@@ -1,0 +1,71 @@
+﻿@model User
+
+@{
+    var playGround = ViewBag.PlayGround as PlayGroundModel.PlayGround;
+    ViewData["Title"] = "Ход экстрасенсов";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Имя экстрасенса
+            </th>
+            <th>
+                Предполагаемое значение
+            </th>
+            <th>
+                История значений
+            </th>
+            <th>
+                Количество удачных попыток
+            </th>
+            <th>
+                Уровень достоверности на текущий момент
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in playGround.Psychics)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentAnswer)
+            </td>
+            <td>
+                @Html.DropDownList("DDD", new SelectList(item.AnswerHistory), "История значений")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SuccessfulAttempts)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConfidenceLevel)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="Result" method="post">
+
+    <input asp-for="UserName" name="userName" value="@Model.UserName" type="hidden" />
+    <input asp-for="NumberOfPsychic" name="numberOfPsychic" value="@Model.NumberOfPsychic" type="hidden" />
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label asp-for="DesiredValue" class="control-label">Введите загаданное значение</label>
+            <input asp-for="DesiredValue" name="desiredValue" class="form-control"
+                   placeholder="Введите загаданное значение" />
+            <span asp-validation-for="DesiredValue" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="Результат" class="btn btn-primary" />
+    </div>
+</form>

@@ -1,0 +1,28 @@
+﻿@model User
+
+@{
+    ViewData["Title"] = "Домашняя страница";
+    var userName = ViewData["UserName"];
+}
+
+<div class="text-center">
+    <h1 class="display-4">Добро пожаловать @userName</h1>
+</div>
+<h4>Игра в экстрасенсов</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+
+    <form asp-action="Index" method="post">
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label">Имя</label>
+            <input asp-for="UserName" class="form-control" placeholder="Введите свое имя" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Продолжить" class="btn btn-primary" />
+        </div>
+    </form>
+    </div>
+</div>
