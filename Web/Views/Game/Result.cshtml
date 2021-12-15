@@ -1,7 +1,7 @@
-﻿@model ValidControl
+﻿@model PlayGroundModel.PlayGround
 
 @{
-    var playGround = ViewBag.PlayGround as PlayGroundModel.PlayGround;
+    var validData = ViewBag.ValidData as ValidControl;
     var isPsychicMove = (bool)ViewData["isPsychicMove"];
 
 }
@@ -13,7 +13,7 @@
 else
 {
     <h3>Результат</h3>
-    @await Html.PartialAsync("UserResultPartial", playGround);
+    @await Html.PartialAsync("UserResultPartial", Model);
 }
 
 <div class="row">
@@ -29,7 +29,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in playGround.Psychics)
+                @foreach (var item in Model.Psychics)
                 {
                     var arrayString = String.Join(", ", item.AnswerHistory);
                     <tr>
@@ -58,10 +58,10 @@ else
 <hr />
 
 @if (isPsychicMove)
-{ @await Html.PartialAsync("PsychicBtnPartial", Model); }
+{ @await Html.PartialAsync("PsychicBtnPartial", validData); }
 else
 {
-    @await Html.PartialAsync("ResultBtnPartial");
+  @await Html.PartialAsync("ResultBtnPartial");
 }
 
 

@@ -33,15 +33,14 @@ namespace Web.Controllers
 
             playGround.RunNextIteration(); // итерирует основную модель
 
-            HttpContext.Session.Remove("PlayGround");
+            //HttpContext.Session.Remove("PlayGround");
             HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
 
-            ViewBag.PlayGround = playGround;
+            ViewBag.ValidData = validData;
             ViewData["isPsychicMove"] = true; // флаг для работы с Partial View
 
-            return View("Result", validData);
+            return View("Result", playGround);
         }
-
 
         public IActionResult Result(ValidControl validData)
         {
@@ -50,22 +49,22 @@ namespace Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.PlayGround = playGround;
+                ViewBag.ValidData = validData;
                 ViewData["isPsychicMove"] = true;
 
-                return View("Result", validData);
+                return View(playGround);
             }
 
             playGround.User.DesiredValue = validData.DesiredValue;
             playGround.Result(); // вычисляет результат на основании итерированной модели и числа пользователя
 
-            HttpContext.Session.Remove("PlayGround");
+            //HttpContext.Session.Remove("PlayGround");
             HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
 
-            ViewBag.PlayGround = playGround;
+            ViewBag.ValidData = validData;
             ViewData["isPsychicMove"] = false;
 
-            return View(validData);
+            return View(playGround);
         }
     }
 }

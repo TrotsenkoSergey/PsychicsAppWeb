@@ -85,7 +85,7 @@ namespace PlayGroundModel
             foreach (var psychics in Psychics)
             {
                 var num = Math.Abs(psychics.CurrentAnswer - User.DesiredValue);
-                if (num == 0) // от 20 до 30 - значение уровня доверия не меняется
+                if (num == 0) 
                 {
                     psychics.SuccessfulAttempts++;
                     psychics.ConfidenceLevel += 50;
@@ -94,7 +94,7 @@ namespace PlayGroundModel
                 {
                     psychics.ConfidenceLevel += 20;
                 }
-                else if (num >= 10 && num < 20)
+                else if (num >= 10 && num < 20) // от 20 до 30 - значение уровня доверия не меняется
                 {
                     psychics.ConfidenceLevel += 10;
                 }
@@ -108,8 +108,8 @@ namespace PlayGroundModel
                 }
                 else psychics.ConfidenceLevel -= 30;
 
-                if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
-                if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
+               //if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
+               //if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
             }
         }
 
