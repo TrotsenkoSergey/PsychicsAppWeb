@@ -8,71 +8,51 @@ namespace Web.Controllers
 {
     public class GameController : Controller
     {
-        public IActionResult Start()
-        {
-            User user;
-            if (HttpContext.Session.GetString("User") != null)
-            {
-                user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
-                ViewData["UserName"] = user.UserName;
-                return View();
-            }
-            else return RedirectToAction("Index", "Home");
-        }
-
         [HttpGet]
         public IActionResult Preparation()
         {
-            User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
-            ViewData["UserName"] = user.UserName;
-            return View();
+            return View(new ValidControl());
         }
 
         [HttpPost]
-        public IActionResult Preparation([Bind("NumberOfPsychic, UserName")] User user)
+        public IActionResult Preparation(ValidControl validData)
         {
-            if (ModelState.IsValid)
-            {
-                HttpContext.Session.Remove("User");
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+            if (!ModelState.IsValid) return View();
 
-                var playGround = new PlayGround(HttpContext.Session.Id, user.NumberOfPsychic);
-                playGround.RunNextIteration();
-                HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
+            var playGround = new PlayGround(validData.NumberOfPsychic);
+            playGround.RunNextIteration();
 
-                return RedirectToAction("PsychicMove", "Game", user);
-            }
-            else return View();
+            var stringPlayGround = JsonConvert.SerializeObject(playGround);
+            HttpContext.Session.SetString("PlayGround", stringPlayGround);
+
+            return RedirectToAction("PsychicMove", "Game");
         }
 
-        public IActionResult PsychicMove(User user)
+        public IActionResult PsychicMove(ValidControl validData)
         {
-            PlayGround playGround;
             if (HttpContext.Session.GetString("PlayGround") != null)
             {
-                playGround = JsonConvert.DeserializeObject<PlayGround>(HttpContext.Session.GetString("PlayGround"));
-
-                if (user == null)
-                { user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User")); }
+                var playSession = HttpContext.Session.GetString("PlayGround");
+                var playGround = JsonConvert.DeserializeObject<PlayGround>(playSession);
 
                 ViewBag.PlayGround = playGround;
+                ViewData["IsResult"] = false; //флаг для работы с одной вьюшкой и двумя контроллерами
 
-                return View(user);
+                return View("Result", validData);
             }
-            else return View("Preparation");
+
+            return View("Preparation");
         }
 
-        public IActionResult Result([Bind("UserName, NumberOfPsychic, DesiredValue")] User user)
+
+        public IActionResult Result(ValidControl validData)
         {
+            var playSession = HttpContext.Session.GetString("PlayGround");
+            var playGround = JsonConvert.DeserializeObject<PlayGround>(playSession);
+
             if (ModelState.IsValid)
             {
-                HttpContext.Session.Remove("User");
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-
-                var playGround = JsonConvert.DeserializeObject<PlayGround>(
-                    HttpContext.Session.GetString("PlayGround")
-                    );
-                playGround.User.DesiredValue = user.DesiredValue;
+                playGround.User.DesiredValue = validData.DesiredValue;
 
                 playGround.Result();
                 { if (playGround.Iterations != 0) playGround.RunNextIteration(); }
@@ -81,14 +61,16 @@ namespace Web.Controllers
                 HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
 
                 ViewBag.PlayGround = playGround;
+                ViewData["IsResult"] = true;
 
-                return View(user);
+                return View(validData);
             }
             else
             {
-                return RedirectToAction("PsychicMove", "Game", user);
+                ViewBag.PlayGround = playGround;
+                ViewData["IsResult"] = (playGround.Iterations > 1);
+                return View("Result", validData);
             }
         }
-
     }
 }

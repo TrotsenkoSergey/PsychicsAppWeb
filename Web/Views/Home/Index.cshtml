@@ -1,28 +1,20 @@
-﻿@model User
-
-@{
-    ViewData["Title"] = "Домашняя страница";
-    var userName = ViewData["UserName"];
-}
-
+﻿
 <div class="text-center">
-    <h1 class="display-4">Добро пожаловать @userName</h1>
+    <h1 class="display-4">Добро пожаловать!</h1>
 </div>
-<h4>Игра в экстрасенсов</h4>
+
+<h4 class="text-center">Игра с экстрасенсами</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<h6>Правила игры</h6>
+<p>Вам необходимо загадать число от 10 до 99.</p>
+<p>Экстрасенсы (их количество Вы определите сами от 2 до 5) должны это число угадать.</p>
+<p>Вступившие в игру экстрасенсы предлагают варианты ответа и начинают с уровнем достоверности равным 100.</p>
+<p>После того как экстрасенсы предложили свои варианты, Вы вводите свое ранее загаданное значение.</p>
+<p>В зависимости от близости к загаданному Вами числу экстрасенсы увеличивают или уменьшают уровень своей достоверности.</p>
+<p><b>Загадайте число от 10 до 99. После чего подтвердите свой выбор нажав на кнопку Старт.</b></p>
 
-    <form asp-action="Index" method="post">
-        <div class="form-group">
-            <label asp-for="UserName" class="control-label">Имя</label>
-            <input asp-for="UserName" class="form-control" placeholder="Введите свое имя" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <input type="submit" value="Продолжить" class="btn btn-primary" />
-        </div>
-    </form>
+<form asp-controller="Game" asp-action="Preparation" method="get">
+    <div class="form-group">
+        <input type="submit" value="Старт" class="btn btn-primary" />
     </div>
-</div>
+</form>

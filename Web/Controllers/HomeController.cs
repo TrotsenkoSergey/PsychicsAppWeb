@@ -8,31 +8,12 @@ namespace Web.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
-            User user;
-            if (HttpContext.Session.GetString("User") != null)
-            {
-                user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
-                ViewData["UserName"] = user.UserName;
-            }
-            else user = new User();
-            return View(user);
+            return View();
         }
 
-        [HttpPost]
-        public IActionResult Index([Bind("UserName")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-
-                return RedirectToAction("Start", "Game");
-            }
-            else return View(user);
-        }
-
-       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

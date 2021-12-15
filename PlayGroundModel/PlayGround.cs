@@ -6,34 +6,32 @@ namespace PlayGroundModel
     public class PlayGround
     {
         /// <summary>
-        /// Количество попыток.
-        /// </summary>
-        public int Iterations { get; set; }
-
-        /// <summary>
         /// Конструктор игровой площадки.
         /// </summary>
-        /// <param name="id">Id площадки</param>
         /// <param name="numberOfParticipants">Количество участников</param>
-        public PlayGround(string id, int numberOfParticipants = 0)
+        public PlayGround(int numberOfParticipants = 0)
         {
-            Id = id;
             if (numberOfParticipants != 0) SetRangeOfRandomPsychics(numberOfParticipants);
             else SetRandomPsychic();
             Iterations = 0;
         }
 
-        public PlayGround() { }
+        public PlayGround() { } // конструктор для сериализации
 
         /// <summary>
-        /// Номер площадки.
+        /// Количество попыток.
         /// </summary>
-        public string Id { get; set; }
+        public int Iterations { get; set; }
 
         /// <summary>
         /// Участники - экстрасенсы.
         /// </summary>
         public List<Psychic> Psychics { get; set; } = new List<Psychic>();
+
+        /// <summary>
+        /// Участник игры.
+        /// </summary>
+        public Participant User { get; set; } = new Participant();
 
         /// <summary>
         /// Добавить на площадку одного случайного участника-экстрасенса.
@@ -42,7 +40,6 @@ namespace PlayGroundModel
         {
             var psychic = new Psychic()
             {
-                Id = Psychics.Count + 1,
                 Name = GetUniqueRandomName()
             };
             Psychics.Add(psychic);
@@ -58,7 +55,6 @@ namespace PlayGroundModel
             {
                 var psychic = new Psychic()
                 {
-                    Id = GetUniqueId(),
                     Name = GetUniqueRandomName()
                 };
                 Psychics.Add(psychic);
@@ -66,12 +62,7 @@ namespace PlayGroundModel
         }
 
         /// <summary>
-        /// Участник игры.
-        /// </summary>
-        public Participant User { get; set; } = new Participant();
-
-        /// <summary>
-        /// Попытка отгадать значения.
+        /// Попытка отгадать значения участвующими экстрасенсами.
         /// </summary>
         public void RunNextIteration()
         {
@@ -120,16 +111,6 @@ namespace PlayGroundModel
                 if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
                 if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
             }
-        }
-
-        private int GetUniqueId()
-        {
-            int id = Psychics.Count;
-            while (Psychics.Exists(e => e.Id == id))
-            {
-                id++;
-            }
-            return id;
         }
 
         private string GetUniqueRandomName()
