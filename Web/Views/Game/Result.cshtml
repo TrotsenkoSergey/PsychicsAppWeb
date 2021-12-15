@@ -2,42 +2,36 @@
 
 @{
     var playGround = ViewBag.PlayGround as PlayGroundModel.PlayGround;
-    var isResult = (bool)ViewData["IsResult"];
+    var isPsychicMove = (bool)ViewData["isPsychicMove"];
+
 }
 
-@if (isResult)
+@if (isPsychicMove)
 {
-    <h3>Результат</h3>
-    @await Html.PartialAsync("ResultPartial", playGround);
+    <h3>Ход экстрасенсов</h3>
 }
 else
-{ <h3>Ход экстрасенсов</h3>}
+{
+    <h3>Результат</h3>
+    @await Html.PartialAsync("UserResultPartial", playGround);
+}
 
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>
-                        Имя экстрасенса
-                    </th>
-                    <th>
-                        Предполагаемое значение
-                    </th>
-                    <th>
-                        История значений
-                    </th>
-                    <th>
-                        Количество удачных попыток
-                    </th>
-                    <th>
-                        Уровень достоверности на текущий момент
-                    </th>
+                    <th>Имя экстрасенса</th>
+                    <th>Предполагаемое значение</th>
+                    <th>История значений</th>
+                    <th>Количество удачных попыток</th>
+                    <th>Уровень достоверности на текущий момент</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in playGround.Psychics)
                 {
+                    var arrayString = String.Join(", ", item.AnswerHistory);
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
@@ -46,9 +40,7 @@ else
                             @Html.DisplayFor(modelItem => item.CurrentAnswer)
                         </td>
                         <td>
-                            @Html.DropDownList("DDD", new SelectList(item.AnswerHistory), "История значений")
-
-                            @*@Html.ListBox("DDD", new SelectList(item.AnswerHistory), "История значений")*@
+                            @arrayString
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.SuccessfulAttempts)
@@ -63,29 +55,13 @@ else
     </div>
 </div>
 
-<hr/>
+<hr />
 
-<div class="container">
-    <div class="row">
-        <form asp-action="Result" method="post">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label asp-for="DesiredValue" class="control-label">
-                        @if (isResult)
-                        {<span>Введите значение для продолжения игры</span>}
-                        else
-                        {<span>Введите загаданное значение</span>}
-                    </label>
-                    <input asp-for="DesiredValue" name="desiredValue" class="form-control"
-                           placeholder="Введите загаданное значение" />
-                    <span asp-validation-for="DesiredValue" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Результат" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+@if (isPsychicMove)
+{ @await Html.PartialAsync("PsychicBtnPartial", Model); }
+else
+{
+    @await Html.PartialAsync("ResultBtnPartial");
+}
 
 

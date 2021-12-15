@@ -1,0 +1,27 @@
+﻿@*
+    Часть представления Result для отображения информация участника, формирующееся в самом конце игры
+*@
+
+@model PlayGroundModel.PlayGround
+
+@{
+    string arrayString = String.Join(", ", Model.User.HistoryOfDesiredValue);
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped border-dark">
+            <tbody>
+                <tr>
+                    <td class="text-dark col-md-6">
+                        Последнее загаданное Вами значение - @Model.User.DesiredValue
+                    </td>
+                    <td class="col-md-6">
+                        История значений: @arrayString
+                        @*@Html.DropDownList("DDD", new SelectList(Model.User.HistoryOfDesiredValue), "История значений")*@
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
