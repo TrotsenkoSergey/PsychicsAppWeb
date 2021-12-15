@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PlayGroundModel
 {
@@ -15,7 +14,6 @@ namespace PlayGroundModel
         /// Конструктор игровой площадки.
         /// </summary>
         /// <param name="id">Id площадки</param>
-        /// <param name="desiredValue">Загаданное пользователем значение</param>
         /// <param name="numberOfParticipants">Количество участников</param>
         public PlayGround(string id, int numberOfParticipants = 0)
         {
