@@ -6,7 +6,7 @@ namespace Web.Models
     /// <summary>
     /// Модель для проверки соответствия вводимой пользователем информации-допустимой.
     /// </summary>
-    public class ValidControl
+    public class ValidUserValue
     {
         [Range(2, 5, ErrorMessage = "Количество не может быть ниже 2х и выше 5ти")]
         public int NumberOfPsychic { get; set; } = 2;
