@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlayGroundModel;
 using Web.Models;
 using Web.Services;
@@ -17,19 +15,19 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Preparation() => View(new ValidControl());
+        public IActionResult Preparation() => View(new ValidUserValue());
 
         [HttpPost]
-        public IActionResult Preparation(ValidControl validData)
+        public IActionResult Preparation(ValidUserValue validData)
         {
             if (!ModelState.IsValid) return View();
 
-            _playGroundService.SetNewPlayGround(validData.NumberOfPsychic);
+            _playGroundService.CreateNewPlayGround(validData.NumberOfPsychic).UpdateSession();
 
             return RedirectToAction("PsychicMove", "Game");
         }
 
-        public IActionResult PsychicMove(ValidControl validData)
+        public IActionResult PsychicMove(ValidUserValue validData)
         {
             if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround)) 
                 return View("Preparation");
@@ -43,7 +41,7 @@ namespace Web.Controllers
             return View("Result", playGround);
         }
 
-        public IActionResult Result(ValidControl validData)
+        public IActionResult Result(ValidUserValue validData)
         {
             if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround))
                 return View("Preparation");
