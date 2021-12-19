@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PlayGroundModel
 {
-    public class PlayGround
+    public class PlayGround : IPlayGround
     {
         /// <summary>
         /// Конструктор игровой площадки.
@@ -28,14 +28,14 @@ namespace PlayGroundModel
         public bool IsPsychicsMove { get; set; } = true;
 
         /// <summary>
-        /// Экстрасенсы.
-        /// </summary>
-        public List<Psychic> Psychics { get; set; } = new List<Psychic>();
-
-        /// <summary>
         /// Участник игры.
         /// </summary>
         public Participant User { get; set; } = new Participant();
+
+        /// <summary>
+        /// Экстрасенсы.
+        /// </summary>
+        public List<Psychic> Psychics { get; set; } = new List<Psychic>();
 
         /// <summary>
         /// Добавить на площадку одного случайного участника-экстрасенса.
@@ -66,65 +66,91 @@ namespace PlayGroundModel
         }
 
         /// <summary>
-        /// Попытка отгадать значения участвующими экстрасенсами.
+        /// Ход участвующих экстрасенсов и попытка отгадать значение.
         /// </summary>
-        private void RunNextIteration()
+        private void PsychicsMove()
         {
-            Iterations++;
             foreach (var psychics in Psychics)
             {
                 psychics.AttepmtsCounter = Iterations;
                 psychics.CurrentAnswer = psychics.GuessNumber();
                 psychics.AnswerHistory.Add(psychics.CurrentAnswer);
             }
-            IsPsychicsMove = false;
         }
 
         /// <summary>
-        /// Вычисление уровня доверия в зависимости от результата.
+        /// Записывает последующее загаданное значение.
+        /// </summary>
+        /// <param name="desiredValue">Загаданное значение</param>
+        public void SetNextDesiredValue(int desiredValue)
+        {
+            User.DesiredValue = desiredValue;
+            User.HistoryOfDesiredValue.Add(desiredValue);
+        }
+
+        /// <summary>
+        /// Вычисление уровня достоверности в зависимости от загаданного значения.
         /// </summary>
         private void Result()
         {
-            User.HistoryOfDesiredValue.Add(User.DesiredValue);
-
-            foreach (var psychics in Psychics)
+            foreach (var psychic in Psychics)
             {
-                var num = Math.Abs(psychics.CurrentAnswer - User.DesiredValue);
-                if (num == 0)
-                {
-                    psychics.SuccessfulAttempts++;
-                    psychics.ConfidenceLevel += 50;
-                }
-                else if (num > 0 && num < 10)
-                {
-                    psychics.ConfidenceLevel += 20;
-                }
-                else if (num >= 10 && num < 20) // от 20 до 30 - значение уровня доверия не меняется
-                {
-                    psychics.ConfidenceLevel += 10;
-                }
-                else if (num >= 30 && num < 40)
-                {
-                    psychics.ConfidenceLevel -= 10;
-                }
-                else if (num >= 40 && num < 60)
-                {
-                    psychics.ConfidenceLevel -= 20;
-                }
-                else psychics.ConfidenceLevel -= 30;
+                // фиксируем разницу между предполагаем значением и загаданным пользователем
+                int oddsBtwUser = (psychic.CurrentAnswer >= User.DesiredValue) 
+                    ? psychic.CurrentAnswer - User.DesiredValue 
+                    : User.DesiredValue - psychic.CurrentAnswer;
 
-                IsPsychicsMove = true;
-                //if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
-                //if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
+                psychic.PreviousConfidenceLevel = psychic.ConfidenceLevel;
+
+                // перебираем и в зависимости от результата определяем уровень достоверности
+                if (oddsBtwUser == 0)
+                {
+                    psychic.SuccessfulAttempts++;
+                    psychic.ConfidenceLevel += 50;
+                }
+                else if (oddsBtwUser > 0 && oddsBtwUser < 10)
+                {
+                    psychic.ConfidenceLevel += 20;
+                }
+                else if (oddsBtwUser >= 10 && oddsBtwUser < 20)
+                {
+                    psychic.ConfidenceLevel += 10;
+                }
+                else if (oddsBtwUser >= 20 && oddsBtwUser < 30)
+                {
+                    continue;
+                }
+                else if (oddsBtwUser >= 30 && oddsBtwUser < 40)
+                {
+                    psychic.ConfidenceLevel -= 10;
+                }
+                else if (oddsBtwUser >= 40 && oddsBtwUser < 60)
+                {
+                    psychic.ConfidenceLevel -= 20;
+                }
+                else // oddsBtwUser >= 60
+                { 
+                    psychic.ConfidenceLevel -= 30; 
+                }
             }
         }
 
         /// <summary>
         /// Запуск следующего хода (программа сама решит кто это Экстрасенсы или участник).
         /// </summary>
-        public void Run() 
-        { if (IsPsychicsMove) RunNextIteration();
-            else Result();
+        public void Run()
+        {
+            if (IsPsychicsMove)
+            {
+                Iterations++;
+                PsychicsMove(); 
+                IsPsychicsMove = false; 
+            }
+            else
+            { 
+                Result(); 
+                IsPsychicsMove = true; 
+            }
         }
 
         private string GetUniqueRandomName()
