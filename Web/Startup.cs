@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using Web.Services;
 
 namespace Web
 {
@@ -20,11 +21,13 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSession(o =>
+            services.AddHttpContextAccessor();
+            services.AddSession(options =>
             {
-                o.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
             }
             );
+            services.AddSingleton<IPlayGroundService, PlayGroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

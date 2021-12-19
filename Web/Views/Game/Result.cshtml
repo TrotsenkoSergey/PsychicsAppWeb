@@ -36,30 +36,47 @@ else
                 @foreach (var psychic in Model.Psychics)
                 {
                     var answerHistory = String.Join(", ", psychic.AnswerHistory);
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => psychic.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => psychic.CurrentAnswer)
-                    </td>
-                    <td>
-                        @answerHistory
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => psychic.SuccessfulAttempts)
-                    </td>
-                    @if (!isPsychicMove)
-                    {
-                        var oddsBtwUser = Math.Abs(psychic.CurrentAnswer - Model.User.DesiredValue);
+                    <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => oddsBtwUser)
+                            @Html.DisplayFor(modelItem => psychic.Name)
                         </td>
-                    }
-                    <td>
-                        @Html.DisplayFor(modelItem => psychic.ConfidenceLevel)
-                    </td>
-                </tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.CurrentAnswer)
+                        </td>
+                        <td>
+                            @answerHistory
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.SuccessfulAttempts)
+                        </td>
+                        @if (!isPsychicMove)
+                        {
+                            int oddsBtwUser = (psychic.CurrentAnswer >= Model.User.DesiredValue)
+                        ? psychic.CurrentAnswer - Model.User.DesiredValue
+                        : Model.User.DesiredValue - psychic.CurrentAnswer;
+                            <td>
+                                @Html.DisplayFor(modelItem => oddsBtwUser)
+                            </td>
+                        }
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.ConfidenceLevel)
+                            @if (!isPsychicMove)
+                            {
+                                @:(
+                                @if (psychic.ConfidenceLevel >= psychic.PreviousConfidenceLevel)
+                                {
+                                    @:+
+                                    @(psychic.ConfidenceLevel - psychic.PreviousConfidenceLevel)
+                                }
+                                else
+                                {
+                                    @:-
+                                    @(psychic.PreviousConfidenceLevel - psychic.ConfidenceLevel)
+                                }
+                                @:)
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
