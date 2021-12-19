@@ -18,7 +18,7 @@ namespace PlayGroundModel
         /// Участник игры.
         /// </summary>
         Participant User { get; }
-
+         
         /// <summary>
         /// Экстрасенсы.
         /// </summary>
