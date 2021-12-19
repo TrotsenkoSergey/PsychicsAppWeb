@@ -26,12 +26,12 @@ namespace Web.Controllers
 
         public IActionResult PsychicMove(ValidControl validData)
         {
-            if (HttpContext.Session.GetString("PlayGround") == null) View("Preparation");
+            if (HttpContext.Session.GetString("PlayGround") == null) return View("Preparation");
 
             var playSession = HttpContext.Session.GetString("PlayGround");
             var playGround = JsonConvert.DeserializeObject<PlayGround>(playSession);
 
-            playGround.RunNextIteration(); // итерирует основную модель
+            playGround.Run(); // итерирует основную модель
 
             //HttpContext.Session.Remove("PlayGround");
             HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
@@ -56,7 +56,7 @@ namespace Web.Controllers
             }
 
             playGround.User.DesiredValue = validData.DesiredValue;
-            playGround.Result(); // вычисляет результат на основании итерированной модели и числа пользователя
+            playGround.Run(); // вычисляет результат на основании итерированной модели и числа пользователя
 
             //HttpContext.Session.Remove("PlayGround");
             HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));

@@ -13,7 +13,6 @@ namespace PlayGroundModel
         {
             if (numberOfParticipants != 0) SetRangeOfRandomPsychics(numberOfParticipants);
             else SetRandomPsychic();
-            Iterations = 0;
         }
 
         public PlayGround() { } // конструктор для сериализации
@@ -21,10 +20,15 @@ namespace PlayGroundModel
         /// <summary>
         /// Количество попыток.
         /// </summary>
-        public int Iterations { get; set; }
+        public int Iterations { get; set; } = 0;
 
         /// <summary>
-        /// Участники - экстрасенсы.
+        /// Указывает чей сейчас ход (экстрасенсов или участника).
+        /// </summary>
+        public bool IsPsychicsMove { get; set; } = true;
+
+        /// <summary>
+        /// Экстрасенсы.
         /// </summary>
         public List<Psychic> Psychics { get; set; } = new List<Psychic>();
 
@@ -64,7 +68,7 @@ namespace PlayGroundModel
         /// <summary>
         /// Попытка отгадать значения участвующими экстрасенсами.
         /// </summary>
-        public void RunNextIteration()
+        private void RunNextIteration()
         {
             Iterations++;
             foreach (var psychics in Psychics)
@@ -73,24 +77,25 @@ namespace PlayGroundModel
                 psychics.CurrentAnswer = psychics.GuessNumber();
                 psychics.AnswerHistory.Add(psychics.CurrentAnswer);
             }
+            IsPsychicsMove = false;
         }
 
         /// <summary>
         /// Вычисление уровня доверия в зависимости от результата.
         /// </summary>
-        public void Result()
+        private void Result()
         {
             User.HistoryOfDesiredValue.Add(User.DesiredValue);
 
             foreach (var psychics in Psychics)
             {
                 var num = Math.Abs(psychics.CurrentAnswer - User.DesiredValue);
-                if (num == 0) 
+                if (num == 0)
                 {
                     psychics.SuccessfulAttempts++;
                     psychics.ConfidenceLevel += 50;
                 }
-                else if (num > 0 && num < 10) 
+                else if (num > 0 && num < 10)
                 {
                     psychics.ConfidenceLevel += 20;
                 }
@@ -108,9 +113,18 @@ namespace PlayGroundModel
                 }
                 else psychics.ConfidenceLevel -= 30;
 
-               //if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
-               //if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
+                IsPsychicsMove = true;
+                //if (psychics.ConfidenceLevel > 100) psychics.ConfidenceLevel = 100;
+                //if (psychics.ConfidenceLevel < 0) psychics.ConfidenceLevel = 0;
             }
+        }
+
+        /// <summary>
+        /// Запуск следующего хода (программа сама решит кто это Экстрасенсы или участник).
+        /// </summary>
+        public void Run() 
+        { if (IsPsychicsMove) RunNextIteration();
+            else Result();
         }
 
         private string GetUniqueRandomName()
