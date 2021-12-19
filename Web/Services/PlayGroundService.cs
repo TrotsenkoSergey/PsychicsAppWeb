@@ -22,16 +22,6 @@ namespace Web.Services
         public ISession Session => _httpContextAccessor.HttpContext.Session;
 
         /// <summary>
-        /// Инициализирует игровую площадку и сохраняет ее в Session.
-        /// </summary>
-        /// <param name="numberOfPsychics">Количество экстрасенсов</param>
-        public void SetNewPlayGround(int numberOfPsychics)
-        {
-            var playGround = new PlayGround(numberOfPsychics);
-            Session.SetPlayGround(playGround);
-        }
-
-        /// <summary>
         /// Пытается получить PlayGround из Session.
         /// </summary>
         /// <param name="playGroundInterface">Интерфейс игровой площадки</param>
@@ -47,6 +37,16 @@ namespace Web.Services
 
             playGroundInterface = null;
             return false;
+        }
+
+        /// <summary>
+        /// Инициализирует новую игровую площадку.
+        /// </summary>
+        /// <param name="numberOfPsychics">Количество экстрасенсов</param>
+        public IPlayGroundService CreateNewPlayGround(int numberOfPsychics)
+        {
+            _playGround = new PlayGround(numberOfPsychics);
+            return this;
         }
 
         /// <summary>

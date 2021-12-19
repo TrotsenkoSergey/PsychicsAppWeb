@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlayGroundModel;
 using Web.Models;
 using Web.Services;
@@ -17,56 +15,46 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Preparation() => View(new ValidControl());
+        public IActionResult Preparation() => View(new ValidUserValue());
 
         [HttpPost]
-        public IActionResult Preparation(ValidControl validData)
+        public IActionResult Preparation(ValidUserValue validData)
         {
             if (!ModelState.IsValid) return View();
 
-            _playGroundService.SetNewPlayGround(validData.NumberOfPsychic);
+            _playGroundService.CreateNewPlayGround(validData.NumberOfPsychic).UpdateSession();
 
-            return RedirectToAction("PsychicMove", "Game");
+            return RedirectToAction(nameof(PsychicsMove));
         }
 
-        public IActionResult PsychicMove(ValidControl validData)
+        public IActionResult PsychicsMove()
         {
             if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround)) 
                 return View("Preparation");
-            
-            ViewBag.ValidData = validData;
-            ViewData["isPsychicMove"] = playGround.IsPsychicsMove; 
-            // флаг для работы с Partial View
 
-            _playGroundService.Run().UpdateSession(); 
+            _playGroundService.Run().UpdateSession();
 
-            return View("Result", playGround);
+            ViewBag.ValidData = playGround;
+            return View("PsychicsMove", new ValidUserValue());
         }
 
-        public IActionResult Result(ValidControl validData)
+        public IActionResult Result(ValidUserValue validData)
         {
             if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround))
                 return View("Preparation");
 
             if (!ModelState.IsValid)
             {
-                playGround.IsPsychicsMove = true;
-                _playGroundService.UpdateSession();
-
-                ViewData["isPsychicMove"] = playGround.IsPsychicsMove;
-                ViewBag.ValidData = validData;
-
-                return View(playGround);
+                playGround.IsPsychicsMove = false;
+                ViewBag.ValidData = playGround;
+                return View("PsychicsMove", validData);
             }
-
-            ViewBag.ValidData = validData;
-            ViewData["isPsychicMove"] = playGround.IsPsychicsMove;
 
             _playGroundService.SetNextDesiredValue(validData.DesiredValue)
                               .Run()
                               .UpdateSession(); 
 
-            return View(playGround);
+            return View("Result", playGround);
         }
     }
 }

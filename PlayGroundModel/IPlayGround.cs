@@ -4,9 +4,24 @@ namespace PlayGroundModel
 {
     public interface IPlayGround
     {
-        bool IsPsychicsMove { get; set; }
+        /// <summary>
+        /// Количество попыток.
+        /// </summary>
         int Iterations { get; }
-        List<Psychic> Psychics { get; }
+
+        /// <summary>
+        /// Указывает чей сейчас ход (экстрасенсов или участника).
+        /// </summary>
+        bool IsPsychicsMove { get; set; }
+
+        /// <summary>
+        /// Участник игры.
+        /// </summary>
         Participant User { get; }
+
+        /// <summary>
+        /// Экстрасенсы.
+        /// </summary>
+        List<Psychic> Psychics { get; }
     }
 }
