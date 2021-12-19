@@ -25,7 +25,7 @@ namespace PlayGroundModel
         /// <summary>
         /// Уровень достоверности.
         /// </summary>
-        public double ConfidenceLevel { get; set; } = 100d;
+        public int ConfidenceLevel { get; set; } = 100;
 
         /// <summary>
         /// История ответов.

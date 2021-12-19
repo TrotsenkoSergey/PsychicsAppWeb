@@ -20,9 +20,9 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSession(o =>
+            services.AddSession(options =>
             {
-                o.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
             }
             );
         }

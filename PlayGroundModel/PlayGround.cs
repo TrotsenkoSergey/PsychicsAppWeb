@@ -8,10 +8,10 @@ namespace PlayGroundModel
         /// <summary>
         /// Конструктор игровой площадки.
         /// </summary>
-        /// <param name="numberOfParticipants">Количество участников</param>
-        public PlayGround(int numberOfParticipants = 0)
+        /// <param name="numberOfPsychics">Количество участников</param>
+        public PlayGround(int numberOfPsychics = 0)
         {
-            if (numberOfParticipants != 0) SetRangeOfRandomPsychics(numberOfParticipants);
+            if (numberOfPsychics != 0) SetRangeOfRandomPsychics(numberOfPsychics);
             else SetRandomPsychic();
         }
 
