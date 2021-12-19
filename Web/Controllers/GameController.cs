@@ -3,11 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PlayGroundModel;
 using Web.Models;
+using Web.Services;
 
 namespace Web.Controllers
 {
     public class GameController : Controller
     {
+        private readonly IPlayGroundService _playGroundService;
+
+        public GameController(IPlayGroundService playGroundService)
+        {
+            _playGroundService = playGroundService;
+        }
+
         [HttpGet]
         public IActionResult Preparation() => View(new ValidControl());
 
@@ -16,53 +24,47 @@ namespace Web.Controllers
         {
             if (!ModelState.IsValid) return View();
 
-            var playGround = new PlayGround(validData.NumberOfPsychic);
-
-            var stringPlayGround = JsonConvert.SerializeObject(playGround);
-            HttpContext.Session.SetString("PlayGround", stringPlayGround);
+            _playGroundService.SetNewPlayGround(validData.NumberOfPsychic);
 
             return RedirectToAction("PsychicMove", "Game");
         }
 
         public IActionResult PsychicMove(ValidControl validData)
         {
-            if (HttpContext.Session.GetString("PlayGround") == null) return View("Preparation");
-
-            var playSession = HttpContext.Session.GetString("PlayGround");
-            var playGround = JsonConvert.DeserializeObject<PlayGround>(playSession);
-
-            playGround.Run(); // итерирует основную модель
-
-            //HttpContext.Session.Remove("PlayGround");
-            HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
-
+            if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround)) 
+                return View("Preparation");
+            
             ViewBag.ValidData = validData;
-            ViewData["isPsychicMove"] = true; // флаг для работы с Partial View
+            ViewData["isPsychicMove"] = playGround.IsPsychicsMove; 
+            // флаг для работы с Partial View
+
+            _playGroundService.Run().UpdateSession(); 
 
             return View("Result", playGround);
         }
 
         public IActionResult Result(ValidControl validData)
         {
-            var playSession = HttpContext.Session.GetString("PlayGround");
-            var playGround = JsonConvert.DeserializeObject<PlayGround>(playSession);
+            if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround))
+                return View("Preparation");
 
             if (!ModelState.IsValid)
             {
+                playGround.IsPsychicsMove = true;
+                _playGroundService.UpdateSession();
+
+                ViewData["isPsychicMove"] = playGround.IsPsychicsMove;
                 ViewBag.ValidData = validData;
-                ViewData["isPsychicMove"] = true;
 
                 return View(playGround);
             }
 
-            playGround.User.DesiredValue = validData.DesiredValue;
-            playGround.Run(); // вычисляет результат на основании итерированной модели и числа пользователя
-
-            //HttpContext.Session.Remove("PlayGround");
-            HttpContext.Session.SetString("PlayGround", JsonConvert.SerializeObject(playGround));
-
             ViewBag.ValidData = validData;
-            ViewData["isPsychicMove"] = false;
+            ViewData["isPsychicMove"] = playGround.IsPsychicsMove;
+
+            _playGroundService.SetNextDesiredValue(validData.DesiredValue)
+                              .Run()
+                              .UpdateSession(); 
 
             return View(playGround);
         }
