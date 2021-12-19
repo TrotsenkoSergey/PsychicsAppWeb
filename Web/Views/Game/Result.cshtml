@@ -25,30 +25,41 @@ else
                     <th>Предполагаемое значение</th>
                     <th>История значений</th>
                     <th>Количество удачных попыток</th>
+                    @if (!isPsychicMove)
+                    {
+                        <th>Разница с загаданным участником значением</th>
+                    }
                     <th>Уровень достоверности на текущий момент</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Psychics)
+                @foreach (var psychic in Model.Psychics)
                 {
-                    var arrayString = String.Join(", ", item.AnswerHistory);
-                    <tr>
+                    var answerHistory = String.Join(", ", psychic.AnswerHistory);
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => psychic.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => psychic.CurrentAnswer)
+                    </td>
+                    <td>
+                        @answerHistory
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => psychic.SuccessfulAttempts)
+                    </td>
+                    @if (!isPsychicMove)
+                    {
+                        var oddsBtwUser = Math.Abs(psychic.CurrentAnswer - Model.User.DesiredValue);
                         <td>
-                            @Html.DisplayFor(modelItem => item.Name)
+                            @Html.DisplayFor(modelItem => oddsBtwUser)
                         </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CurrentAnswer)
-                        </td>
-                        <td>
-                            @arrayString
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.SuccessfulAttempts)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ConfidenceLevel)
-                        </td>
-                    </tr>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => psychic.ConfidenceLevel)
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -58,10 +69,11 @@ else
 <hr />
 
 @if (isPsychicMove)
-{ @await Html.PartialAsync("PsychicBtnPartial", validData); }
+{@await Html.PartialAsync("PsychicBtnPartial", validData);
+}
 else
 {
-  @await Html.PartialAsync("ResultBtnPartial");
+@await Html.PartialAsync("ResultBtnPartial");
 }
 
 
