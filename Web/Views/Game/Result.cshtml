@@ -1,96 +1,44 @@
-﻿@model PlayGroundModel.PlayGround
+﻿@model PlayGroundModel.IPlayGround
 
 @{
-    var validData = ViewBag.ValidData as ValidUserValue;
-    var isPsychicMove = (bool)ViewData["isPsychicMove"];
-
+    string historyOfDesiredValue = String.Join(", ", Model.User.HistoryOfDesiredValue);
 }
 
-@if (isPsychicMove)
-{
-    <h3>Ход экстрасенсов</h3>
-}
-else
-{
-    <h3>Результат</h3>
-    @await Html.PartialAsync("UserResultPartial", Model);
-}
+<h3>Результат</h3>
 
 <div class="row">
     <div class="col-md-12">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Имя экстрасенса</th>
-                    <th>Предполагаемое значение</th>
-                    <th>История значений</th>
-                    <th>Количество удачных попыток</th>
-                    @if (!isPsychicMove)
-                    {
-                        <th>Разница с загаданным участником значением</th>
-                    }
-                    <th>Уровень достоверности на текущий момент</th>
-                </tr>
-            </thead>
+        <table class="table table-striped border-dark">
             <tbody>
-                @foreach (var psychic in Model.Psychics)
-                {
-                    var answerHistory = String.Join(", ", psychic.AnswerHistory);
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => psychic.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => psychic.CurrentAnswer)
-                        </td>
-                        <td>
-                            @answerHistory
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => psychic.SuccessfulAttempts)
-                        </td>
-                        @if (!isPsychicMove)
-                        {
-                            int oddsBtwUser = (psychic.CurrentAnswer >= Model.User.DesiredValue)
-                        ? psychic.CurrentAnswer - Model.User.DesiredValue
-                        : Model.User.DesiredValue - psychic.CurrentAnswer;
-                            <td>
-                                @Html.DisplayFor(modelItem => oddsBtwUser)
-                            </td>
-                        }
-                        <td>
-                            @Html.DisplayFor(modelItem => psychic.ConfidenceLevel)
-                            @if (!isPsychicMove)
-                            {
-                                @:(
-                                @if (psychic.ConfidenceLevel >= psychic.PreviousConfidenceLevel)
-                                {
-                                    @:+
-                                    @(psychic.ConfidenceLevel - psychic.PreviousConfidenceLevel)
-                                }
-                                else
-                                {
-                                    @:-
-                                    @(psychic.PreviousConfidenceLevel - psychic.ConfidenceLevel)
-                                }
-                                @:)
-                            }
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td class="text-dark col-md-6">
+                        Последнее загаданное Вами значение - @Model.User.DesiredValue
+                    </td>
+                    <td class="col-md-6">
+                        История значений: @historyOfDesiredValue
+                        @*@Html.DropDownList("DDD", new SelectList(Model.User.HistoryOfDesiredValue), "История значений")*@
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<hr />
+@await Html.PartialAsync("TablePartial", Model)
 
-@if (isPsychicMove)
-{@await Html.PartialAsync("PsychicBtnPartial", validData);
-}
-else
-{
-@await Html.PartialAsync("ResultBtnPartial");
-}
-
+<div class="container">
+    <div class="row">
+        <form asp-action="PsychicsMove">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="control-label">Экстрасенсы хотят попытаться еще.</label>
+                </div>
+                <p>Загадайте число от 10 до 99. После чего подтвердите свой выбор нажав на кнопку <b>Ход экстрасенсов.</b></p>
+                <div class="form-group">
+                    <input type="submit" value="Ход экстрасенсов" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 

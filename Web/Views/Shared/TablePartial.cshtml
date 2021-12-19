@@ -1,0 +1,74 @@
+﻿@model PlayGroundModel.IPlayGround
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Имя экстрасенса</th>
+                    <th>Предполагаемое значение</th>
+                    <th>История значений</th>
+                    <th>Количество удачных попыток</th>
+                    @if (Model.IsPsychicsMove)
+                    {
+                        <th>Разница с загаданным участником значением</th>
+                    }
+                    <th>Уровень достоверности на текущий момент</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var psychic in Model.Psychics)
+                {
+                    var answerHistory = String.Join(", ", psychic.AnswerHistory);
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.CurrentAnswer)
+                        </td>
+                        <td>
+                            @answerHistory
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.SuccessfulAttempts)
+                        </td>
+
+                        @if (Model.IsPsychicsMove)
+                        {
+                            int oddsBtwUser = (psychic.CurrentAnswer >= Model.User.DesiredValue)
+                        ? psychic.CurrentAnswer - Model.User.DesiredValue
+                        : Model.User.DesiredValue - psychic.CurrentAnswer;
+                            <td>
+                                @Html.DisplayFor(modelItem => oddsBtwUser)
+                            </td>
+                        }
+
+                        <td>
+                            @Html.DisplayFor(modelItem => psychic.ConfidenceLevel)
+                            
+                            @if (Model.IsPsychicsMove)
+                            {
+                                @:(
+                                @if (psychic.ConfidenceLevel >= psychic.PreviousConfidenceLevel)
+                                {
+                                    @:+
+                                    @(psychic.ConfidenceLevel - psychic.PreviousConfidenceLevel)
+                                }
+                                else
+                                {
+                                    @:-
+                                    @(psychic.PreviousConfidenceLevel - psychic.ConfidenceLevel)
+                                }
+                                @:)
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr />
