@@ -1,17 +1,20 @@
 ﻿using PlayGroundModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Web.Services
 {
+    /// <summary>
+    /// Интерфейс для взаимодействия с контроллером.
+    /// </summary>
     public interface IPlayGroundService
     {
         void SetNewPlayGround(int numberOfPsychics);
 
-        PlayGround TryGetPlayGround(out PlayGround playGround);
+        bool TryGetPlayGround(out IPlayGround playGround);
 
-        void SetNextDesiredValue(int desiredValue);
+        IPlayGroundService SetNextDesiredValue(int desiredValue);
+
+        IPlayGroundService Run();
+
+        void UpdateSession();
     }
 }

@@ -1,26 +1,80 @@
-﻿using PlayGroundModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using PlayGroundModel;
 
 namespace Web.Services
 {
+    /// <summary>
+    /// Сервис для взаимодействия Session и PlayGroundModel.
+    /// </summary>
     public class PlayGroundService : IPlayGroundService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private PlayGround _playGround;
+
+        public PlayGroundService(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        /// <summary>
+        /// Получает текущую Session.
+        /// </summary>
+        public ISession Session => _httpContextAccessor.HttpContext.Session;
+
+        /// <summary>
+        /// Инициализирует игровую площадку и сохраняет ее в Session.
+        /// </summary>
+        /// <param name="numberOfPsychics">Количество экстрасенсов</param>
         public void SetNewPlayGround(int numberOfPsychics)
         {
-            throw new NotImplementedException();
+            var playGround = new PlayGround(numberOfPsychics);
+            Session.SetPlayGround(playGround);
         }
 
-        public void SetNextDesiredValue(int desiredValue)
+        /// <summary>
+        /// Пытается получить PlayGround из Session.
+        /// </summary>
+        /// <param name="playGroundInterface">Интерфейс игровой площадки</param>
+        /// <returns>True если значение в Session имеется</returns>
+        public bool TryGetPlayGround(out IPlayGround playGroundInterface)
         {
-            throw new NotImplementedException();
+            if (Session.TryGetPlayGround(out PlayGround playGround))
+            {
+                playGroundInterface = playGround;
+                _playGround = playGround;
+                return true;
+            }
+
+            playGroundInterface = null;
+            return false;
         }
 
-        public PlayGround TryGetPlayGround(out PlayGround playGround)
+        /// <summary>
+        /// Устанавливает в имеющийся PlayGround значение загаданного числа.
+        /// </summary>
+        /// <param name="desiredValue">Загаданное число</param>
+        public IPlayGroundService SetNextDesiredValue(int desiredValue)
         {
-            throw new NotImplementedException();
+            _playGround.SetNextDesiredValue(desiredValue);
+            return this;
+        }
+
+        /// <summary>
+        /// Запускает в PlayGround ход участника или экстрасенсов (в порядке очередности).
+        /// </summary>
+        public IPlayGroundService Run()
+        {
+            _playGround.Run();
+            return this;
+        }
+
+        /// <summary>
+        /// Обновляет PlayGround в Session.
+        /// </summary>
+        public void UpdateSession()
+        {
+            if (_playGround != null)
+                Session.SetPlayGround(_playGround);
         }
     }
 }
