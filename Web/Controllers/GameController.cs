@@ -8,11 +8,11 @@ namespace Web.Controllers
 {
     public class GameController : Controller
     {
-        private readonly IPlayGroundService _playGroundService;
+        private readonly IDataService _dataService;
 
-        public GameController(IPlayGroundService playGroundService)
+        public GameController(IDataService dataService)
         {
-            _playGroundService = playGroundService;
+            _dataService = dataService;
         }
 
         [HttpGet]
@@ -21,19 +21,22 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Preparation(ValidUserValue validData)
         {
-            if (!ModelState.IsValid) return View();
+            if (!ModelState.IsValid)
+            { return View(); }
 
-            _playGroundService.CreateNewPlayGround(validData.NumberOfPsychic).UpdateSession();
+            var playGround = PlayGroundFactory.GetPlayGround(validData.NumberOfPsychic);
+            _dataService.SetPlayGround(playGround);
 
             return RedirectToAction(nameof(PsychicsMove));
         }
 
         public IActionResult PsychicsMove()
         {
-            if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround)) 
+            if (!_dataService.TryGetPlayGround(out IPlayGround playGround)) 
                 return View("Preparation");
 
-            _playGroundService.Run().UpdateSession();
+            playGround.Run();
+            _dataService.SetPlayGround(playGround);
 
             ViewBag.PlayGround = playGround;
             return View("PsychicsMove", new ValidUserValue());
@@ -41,7 +44,7 @@ namespace Web.Controllers
 
         public IActionResult Result(ValidUserValue validData)
         {
-            if (!_playGroundService.TryGetPlayGround(out IPlayGround playGround))
+            if (!_dataService.TryGetPlayGround(out IPlayGround playGround))
                 return View("Preparation");
 
             if (!ModelState.IsValid)
@@ -51,9 +54,11 @@ namespace Web.Controllers
                 return View("PsychicsMove", validData);
             }
 
-            _playGroundService.SetNextDesiredValue(validData.DesiredValue)
-                              .Run()
-                              .UpdateSession(); 
+            playGround
+                .SetNextDesiredValue(validData.DesiredValue)
+                .Run();
+
+            _dataService.SetPlayGround(playGround);
 
             return View("Result", playGround);
         }

@@ -14,8 +14,8 @@ namespace PlayGroundModel
         {
             if (numberOfPsychics != 0)
             { SetRangeOfRandomPsychics(numberOfPsychics); }
-
-            SetRandomPsychic();
+            else
+            { SetRandomPsychic(); }
         }
 
         public PlayGround() { } // для сериализации
@@ -89,10 +89,12 @@ namespace PlayGroundModel
         /// Записывает последующее загаданное значение.
         /// </summary>
         /// <param name="desiredValue">Загаданное значение</param>
-        public void SetNextDesiredValue(int desiredValue)
+        public IPlayGround SetNextDesiredValue(int desiredValue)
         {
             User.DesiredValue = desiredValue;
             User.HistoryOfDesiredValue.Add(desiredValue);
+
+            return this;
         }
         /// <summary>
         /// Вычисление уровня достоверности в зависимости от загаданного значения.

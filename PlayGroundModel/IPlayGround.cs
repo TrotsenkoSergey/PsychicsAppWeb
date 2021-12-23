@@ -25,7 +25,7 @@ namespace PlayGroundModel
         /// </summary>
         Task<IEnumerable<IPsychic>> GetPsychicsAsync();
 
-        public void SetNextDesiredValue(int desiredValue);
+        public IPlayGround SetNextDesiredValue(int desiredValue);
 
         void Switch();
 

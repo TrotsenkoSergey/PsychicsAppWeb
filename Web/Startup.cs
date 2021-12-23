@@ -27,7 +27,7 @@ namespace Web
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
             }
             );
-            services.AddSingleton<IPlayGroundService, PlayGroundService>();
+            services.AddSingleton<IDataService, DataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
