@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PlayGroundModel
 {
@@ -75,7 +76,7 @@ namespace PlayGroundModel
                 psychics.AnswerHistory.Add(psychics.CurrentAnswer);
             }
         }
-        
+
         public void Switch()
         {
             if (IsPsychicsMove)
@@ -177,9 +178,9 @@ namespace PlayGroundModel
             return User;
         }
 
-        public IEnumerable<IPsychic> GetPsychics()
+        public async Task<IEnumerable<IPsychic>> GetPsychicsAsync()
         {
-            return Psychics;
+            return await Task.Run(() => Psychics);
         }
     }
 }

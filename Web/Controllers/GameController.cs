@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PlayGroundModel;
+using System.Threading.Tasks;
 using Web.Models;
 using Web.Services;
 
@@ -34,7 +35,7 @@ namespace Web.Controllers
 
             _playGroundService.Run().UpdateSession();
 
-            ViewBag.ValidData = playGround.GetPsychics();
+            ViewBag.PlayGround = playGround;
             return View("PsychicsMove", new ValidUserValue());
         }
 
@@ -46,7 +47,7 @@ namespace Web.Controllers
             if (!ModelState.IsValid)
             {
                 playGround.Switch();
-                ViewBag.ValidData = playGround;
+                ViewBag.PlayGround = playGround;
                 return View("PsychicsMove", validData);
             }
 

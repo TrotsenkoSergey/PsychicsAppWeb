@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PlayGroundModel
 {
@@ -22,7 +23,7 @@ namespace PlayGroundModel
         /// <summary>
         /// Экстрасенсы.
         /// </summary>
-        IEnumerable<IPsychic> GetPsychics();
+        Task<IEnumerable<IPsychic>> GetPsychicsAsync();
 
         public void SetNextDesiredValue(int desiredValue);
 
