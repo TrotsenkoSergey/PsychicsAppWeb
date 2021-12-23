@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace PlayGroundModel
 {
-    public static class Tools
+    internal static class Tools
     {
         private static Random _rand;
 

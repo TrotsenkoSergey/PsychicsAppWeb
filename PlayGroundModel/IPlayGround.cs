@@ -12,16 +12,24 @@ namespace PlayGroundModel
         /// <summary>
         /// Указывает чей сейчас ход (экстрасенсов или участника).
         /// </summary>
-        bool IsPsychicsMove { get; set; }
+        bool IsPsychicsMove { get; }
 
         /// <summary>
         /// Участник игры.
         /// </summary>
-        Participant User { get; }
-         
+        IParticipant GetUser();
+
         /// <summary>
         /// Экстрасенсы.
         /// </summary>
-        List<Psychic> Psychics { get; }
+        IEnumerable<IPsychic> GetPsychics();
+
+        public void SetNextDesiredValue(int desiredValue);
+
+        void Switch();
+
+        byte[] Save();
+
+        void Run();
     }
 }

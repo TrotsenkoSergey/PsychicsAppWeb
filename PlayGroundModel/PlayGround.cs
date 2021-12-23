@@ -3,19 +3,21 @@ using System.Collections.Generic;
 
 namespace PlayGroundModel
 {
-    public class PlayGround : IPlayGround
+    internal class PlayGround : IPlayGround
     {
         /// <summary>
-        /// Конструктор игровой площадки.
+        /// Конструктор новой игровой площадки.
         /// </summary>
         /// <param name="numberOfPsychics">Количество участников</param>
         public PlayGround(int numberOfPsychics = 0)
         {
-            if (numberOfPsychics != 0) SetRangeOfRandomPsychics(numberOfPsychics);
-            else SetRandomPsychic();
+            if (numberOfPsychics != 0)
+            { SetRangeOfRandomPsychics(numberOfPsychics); }
+
+            SetRandomPsychic();
         }
 
-        public PlayGround() { } // конструктор для сериализации
+        public PlayGround() { } // для сериализации
 
         /// <summary>
         /// Количество попыток.
@@ -36,7 +38,6 @@ namespace PlayGroundModel
         /// Экстрасенсы.
         /// </summary>
         public List<Psychic> Psychics { get; set; } = new List<Psychic>();
-
         /// <summary>
         /// Добавить на площадку одного случайного участника-экстрасенса.
         /// </summary>
@@ -48,7 +49,6 @@ namespace PlayGroundModel
             };
             Psychics.Add(psychic);
         }
-
         /// <summary>
         /// Добавить на площадку нескольких случайных участников-экстрасенсов.
         /// </summary>
@@ -64,7 +64,6 @@ namespace PlayGroundModel
                 Psychics.Add(psychic);
             }
         }
-
         /// <summary>
         /// Ход участвующих экстрасенсов и попытка отгадать значение.
         /// </summary>
@@ -72,10 +71,17 @@ namespace PlayGroundModel
         {
             foreach (var psychics in Psychics)
             {
-                psychics.AttepmtsCounter = Iterations;
                 psychics.CurrentAnswer = psychics.GuessNumber();
                 psychics.AnswerHistory.Add(psychics.CurrentAnswer);
             }
+        }
+        
+        public void Switch()
+        {
+            if (IsPsychicsMove)
+                IsPsychicsMove = false;
+            else
+                IsPsychicsMove = true;
         }
 
         /// <summary>
@@ -87,7 +93,6 @@ namespace PlayGroundModel
             User.DesiredValue = desiredValue;
             User.HistoryOfDesiredValue.Add(desiredValue);
         }
-
         /// <summary>
         /// Вычисление уровня достоверности в зависимости от загаданного значения.
         /// </summary>
@@ -96,8 +101,8 @@ namespace PlayGroundModel
             foreach (var psychic in Psychics)
             {
                 // фиксируем разницу между предполагаем значением и загаданным пользователем
-                int oddsBtwUser = (psychic.CurrentAnswer >= User.DesiredValue) 
-                    ? psychic.CurrentAnswer - User.DesiredValue 
+                int oddsBtwUser = (psychic.CurrentAnswer >= User.DesiredValue)
+                    ? psychic.CurrentAnswer - User.DesiredValue
                     : User.DesiredValue - psychic.CurrentAnswer;
 
                 psychic.PreviousConfidenceLevel = psychic.ConfidenceLevel;
@@ -129,28 +134,31 @@ namespace PlayGroundModel
                     psychic.ConfidenceLevel -= 20;
                 }
                 else // oddsBtwUser >= 60
-                { 
-                    psychic.ConfidenceLevel -= 30; 
+                {
+                    psychic.ConfidenceLevel -= 30;
                 }
             }
         }
-
         /// <summary>
         /// Запуск следующего хода (программа сама решит кто это Экстрасенсы или участник).
-        /// </summary>
         public void Run()
         {
             if (IsPsychicsMove)
             {
                 Iterations++;
-                PsychicsMove(); 
-                IsPsychicsMove = false; 
+                PsychicsMove();
+                IsPsychicsMove = false;
             }
             else
-            { 
-                Result(); 
-                IsPsychicsMove = true; 
+            {
+                Result();
+                IsPsychicsMove = true;
             }
+        }
+
+        public byte[] Save()
+        {
+            return Memento.Serialize(this);
         }
 
         private string GetUniqueRandomName()
@@ -162,6 +170,16 @@ namespace PlayGroundModel
             }
             while (Psychics.Exists(e => e.Name == name));
             return name;
+        }
+
+        public IParticipant GetUser()
+        {
+            return User;
+        }
+
+        public IEnumerable<IPsychic> GetPsychics()
+        {
+            return Psychics;
         }
     }
 }
