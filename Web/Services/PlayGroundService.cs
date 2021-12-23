@@ -9,7 +9,7 @@ namespace Web.Services
     public class PlayGroundService : IPlayGroundService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private PlayGround _playGround;
+        private IPlayGround _playGround;
 
         public PlayGroundService(IHttpContextAccessor httpContextAccessor)
         {
@@ -28,7 +28,7 @@ namespace Web.Services
         /// <returns>True если значение в Session имеется</returns>
         public bool TryGetPlayGround(out IPlayGround playGroundInterface)
         {
-            if (Session.TryGetPlayGround(out PlayGround playGround))
+            if (Session.TryGetPlayGround(out IPlayGround playGround))
             {
                 playGroundInterface = playGround;
                 _playGround = playGround;
@@ -45,7 +45,7 @@ namespace Web.Services
         /// <param name="numberOfPsychics">Количество экстрасенсов</param>
         public IPlayGroundService CreateNewPlayGround(int numberOfPsychics)
         {
-            _playGround = new PlayGround(numberOfPsychics);
+            _playGround = PlayGroundFactory.GetPlayGround(numberOfPsychics);
             return this;
         }
 

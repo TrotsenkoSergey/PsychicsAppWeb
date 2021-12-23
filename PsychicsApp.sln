@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31829.152
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{85F1A1B2-9B90-4208-9F88-B0AF6BE5AEEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{85F1A1B2-9B90-4208-9F88-B0AF6BE5AEEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayGroundModel", "PlayGroundModel\PlayGroundModel.csproj", "{66954F35-4D9A-48F4-8D60-EB396ED504DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayGroundModel", "PlayGroundModel\PlayGroundModel.csproj", "{66954F35-4D9A-48F4-8D60-EB396ED504DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

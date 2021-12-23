@@ -1,5 +1,10 @@
 ﻿@model PlayGroundModel.IPlayGround
 
+@{
+    var psychics = Model.GetPsychics();
+    var user = Model.GetUser();
+}
+
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped">
@@ -17,9 +22,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var psychic in Model.Psychics)
+                @foreach (var psychic in psychics)
                 {
-                    var answerHistory = String.Join(", ", psychic.AnswerHistory);
+                    var answerHistory = String.Join(", ", psychic.GetAnswerHistory());
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => psychic.Name)
@@ -36,9 +41,9 @@
 
                         @if (Model.IsPsychicsMove)
                         {
-                            int oddsBtwUser = (psychic.CurrentAnswer >= Model.User.DesiredValue)
-                        ? psychic.CurrentAnswer - Model.User.DesiredValue
-                        : Model.User.DesiredValue - psychic.CurrentAnswer;
+                            int oddsBtwUser = (psychic.CurrentAnswer >= user.DesiredValue)
+                        ? psychic.CurrentAnswer - user.DesiredValue
+                        : user.DesiredValue - psychic.CurrentAnswer;
                             <td>
                                 @Html.DisplayFor(modelItem => oddsBtwUser)
                             </td>

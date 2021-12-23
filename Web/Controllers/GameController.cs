@@ -34,7 +34,7 @@ namespace Web.Controllers
 
             _playGroundService.Run().UpdateSession();
 
-            ViewBag.ValidData = playGround;
+            ViewBag.ValidData = playGround.GetPsychics();
             return View("PsychicsMove", new ValidUserValue());
         }
 
@@ -45,7 +45,7 @@ namespace Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                playGround.IsPsychicsMove = false;
+                playGround.Switch();
                 ViewBag.ValidData = playGround;
                 return View("PsychicsMove", validData);
             }
