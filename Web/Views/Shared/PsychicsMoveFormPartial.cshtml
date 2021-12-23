@@ -1,0 +1,19 @@
+﻿@model ValidUserValue
+
+<div class="container">
+    <div class="row">
+        <form asp-action="PostPsychicsMove" method="post">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label asp-for="@Model.DesiredValue" class="control-label">Введите загаданное значение</label>
+                    <input asp-for="@Model.DesiredValue" name="desiredValue" class="form-control"
+                           placeholder="Введите загаданное значение" />
+                    <span asp-validation-for="@Model.DesiredValue" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Результат" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

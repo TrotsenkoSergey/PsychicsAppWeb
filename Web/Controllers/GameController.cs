@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PlayGroundModel;
-using System.Threading.Tasks;
 using Web.Models;
 using Web.Services;
 
@@ -15,16 +14,16 @@ namespace Web.Controllers
             _dataService = dataService;
         }
 
-        [HttpGet]
-        public IActionResult Preparation() => View(new ValidUserValue());
+        public IActionResult Preparation() =>
+            View(new ValidUserValue());
 
-        [HttpPost]
-        public IActionResult Preparation(ValidUserValue validData)
+        public IActionResult PostPreparation(ValidUserValue validUserValue)
         {
             if (!ModelState.IsValid)
-            { return View(); }
+                return View("Preparation", validUserValue);
 
-            var playGround = PlayGroundFactory.GetPlayGround(validData.NumberOfPsychic);
+            var playGround = PlayGroundFactory.GetPlayGround(validUserValue.NumberOfPsychic);
+            playGround.Run();
             _dataService.SetPlayGround(playGround);
 
             return RedirectToAction(nameof(PsychicsMove));
@@ -32,35 +31,48 @@ namespace Web.Controllers
 
         public IActionResult PsychicsMove()
         {
-            if (!_dataService.TryGetPlayGround(out IPlayGround playGround)) 
+            if (!_dataService.TryGetPlayGround(out IPlayGround playGround))
                 return View("Preparation");
 
-            playGround.Run();
-            _dataService.SetPlayGround(playGround);
-
-            ViewBag.PlayGround = playGround;
-            return View("PsychicsMove", new ValidUserValue());
+            return View(playGround);
         }
 
-        public IActionResult Result(ValidUserValue validData)
+        public IActionResult PostPsychicsMove(ValidUserValue validUserValue)
         {
             if (!_dataService.TryGetPlayGround(out IPlayGround playGround))
                 return View("Preparation");
 
             if (!ModelState.IsValid)
             {
-                playGround.Switch();
-                ViewBag.PlayGround = playGround;
-                return View("PsychicsMove", validData);
+                ViewData["ValidUserValue"] = validUserValue; //так я избавился от VieBag и прокидываю во View->PlayGround
+                return View("PsychicsMove", playGround);
             }
 
             playGround
-                .SetNextDesiredValue(validData.DesiredValue)
+                .SetNextDesiredValue(validUserValue.DesiredValue)
                 .Run();
-
             _dataService.SetPlayGround(playGround);
 
-            return View("Result", playGround);
+            return RedirectToAction(nameof(Result));
+        }
+
+        public IActionResult Result()
+        {
+            if (!_dataService.TryGetPlayGround(out IPlayGround playGround))
+                return View("Preparation");
+
+            return View(playGround);
+        }
+
+        public IActionResult PostResult()
+        {
+            if (!_dataService.TryGetPlayGround(out IPlayGround playGround))
+                return View("Preparation");
+
+            playGround.Run();
+            _dataService.SetPlayGround(playGround);
+
+            return RedirectToAction(nameof(PsychicsMove));
         }
     }
 }
