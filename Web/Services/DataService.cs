@@ -4,7 +4,7 @@ using PlayGroundModel;
 namespace Web.Services
 {
     /// <summary>
-    /// Сервис для взаимодействия Session и PlayGroundModel.
+    /// Сервис для сохранения и получения данных PlayGround из Session.
     /// </summary>
     public class DataService : IDataService
     {

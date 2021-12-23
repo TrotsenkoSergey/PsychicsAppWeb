@@ -37,6 +37,10 @@ namespace PlayGroundModel
         /// </summary>
         public List<int> AnswerHistory { get; set; } = new List<int>();
 
+        /// <summary>
+        /// Получить историю ответов.
+        /// </summary>
+        /// <returns>История ответов</returns>
         public IEnumerable<int> GetAnswerHistory()
         {
             return AnswerHistory;

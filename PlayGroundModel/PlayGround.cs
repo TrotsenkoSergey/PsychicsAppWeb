@@ -26,7 +26,7 @@ namespace PlayGroundModel
         public int Iterations { get; set; } = 0;
 
         /// <summary>
-        /// Указывает чей сейчас ход (экстрасенсов или участника).
+        /// Указатель чей сейчас ход (экстрасенсов или участника).
         /// </summary>
         public bool IsPsychicsMove { get; set; } = true;
 
@@ -39,6 +39,7 @@ namespace PlayGroundModel
         /// Экстрасенсы.
         /// </summary>
         public List<Psychic> Psychics { get; set; } = new List<Psychic>();
+        
         /// <summary>
         /// Добавить на площадку одного случайного участника-экстрасенса.
         /// </summary>
@@ -50,6 +51,7 @@ namespace PlayGroundModel
             };
             Psychics.Add(psychic);
         }
+
         /// <summary>
         /// Добавить на площадку нескольких случайных участников-экстрасенсов.
         /// </summary>
@@ -65,19 +67,24 @@ namespace PlayGroundModel
                 Psychics.Add(psychic);
             }
         }
+
         /// <summary>
-        /// Ход участвующих экстрасенсов и попытка отгадать значение.
+        /// Ход экстрасенсов и попытка отгадать значение.
         /// </summary>
-        private void PsychicsMove()
+        private PlayGround PsychicsMove()
         {
             foreach (var psychics in Psychics)
             {
                 psychics.CurrentAnswer = psychics.GuessNumber();
                 psychics.AnswerHistory.Add(psychics.CurrentAnswer);
             }
+            return this;
         }
 
-        public void Switch()
+        /// <summary>
+        /// Переключает ход экстрасенсов и участника.
+        /// </summary>
+        private void Switch()
         {
             if (IsPsychicsMove)
                 IsPsychicsMove = false;
@@ -86,7 +93,7 @@ namespace PlayGroundModel
         }
 
         /// <summary>
-        /// Записывает последующее загаданное значение.
+        /// Записывает последующее загаданное значение Участнику.
         /// </summary>
         /// <param name="desiredValue">Загаданное значение</param>
         public IPlayGround SetNextDesiredValue(int desiredValue)
@@ -96,10 +103,11 @@ namespace PlayGroundModel
 
             return this;
         }
+
         /// <summary>
         /// Вычисление уровня достоверности в зависимости от загаданного значения.
         /// </summary>
-        private void Result()
+        private PlayGround Result()
         {
             foreach (var psychic in Psychics)
             {
@@ -141,29 +149,36 @@ namespace PlayGroundModel
                     psychic.ConfidenceLevel -= 30;
                 }
             }
+            return this;
         }
+
         /// <summary>
-        /// Запуск следующего хода (программа сама решит кто это Экстрасенсы или участник).
+        /// Запуск следующего хода (программа сама решит кто это Экстрасенсы или Участник).
+        /// </summary>
         public void Run()
         {
             if (IsPsychicsMove)
             {
                 Iterations++;
-                PsychicsMove();
-                IsPsychicsMove = false;
+                PsychicsMove().Switch();
             }
             else
-            {
-                Result();
-                IsPsychicsMove = true;
-            }
+            { Result().Switch(); }
         }
 
+        /// <summary>
+        /// Сохраняет значение PlayGround.
+        /// </summary>
+        /// <returns>Значение PlayGround в byte[]</returns>
         public byte[] Save()
         {
             return Memento.Serialize(this);
         }
 
+        /// <summary>
+        /// Получить уникальное имя.
+        /// </summary>
+        /// <returns>Имя</returns>
         private string GetUniqueRandomName()
         {
             string name;
@@ -175,11 +190,19 @@ namespace PlayGroundModel
             return name;
         }
 
+        /// <summary>
+        /// Получить участника.
+        /// </summary>
+        /// <returns>Участник</returns>
         public IParticipant GetUser()
         {
             return User;
         }
 
+        /// <summary>
+        /// Получить экстрасенсов.
+        /// </summary>
+        /// <returns>Поддерживает ожидание, возвращает экстрасенсов</returns>
         public async Task<IEnumerable<IPsychic>> GetPsychicsAsync()
         {
             return await Task.Run(() => Psychics);
