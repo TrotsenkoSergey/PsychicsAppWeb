@@ -1,7 +1,7 @@
 ﻿@model ValidUserValue
 
 @{ 
-    PlayGroundModel.IPlayGround playGround = ViewBag.ValidData;
+     var playGround = ViewBag.PlayGround as PlayGroundModel.IPlayGround;
 }
 
 <h3>Ход экстрасенсов</h3>

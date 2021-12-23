@@ -1,7 +1,8 @@
 ﻿@model PlayGroundModel.IPlayGround
 
 @{
-    string historyOfDesiredValue = String.Join(", ", Model.User.HistoryOfDesiredValue);
+    var user = Model.GetUser();
+    string historyOfDesiredValue = String.Join(", ", user.GetHistoryOfDesiredValue());
 }
 
 <h3>Результат</h3>
@@ -12,7 +13,7 @@
             <tbody>
                 <tr>
                     <td class="text-dark col-md-6">
-                        Последнее загаданное Вами значение - @Model.User.DesiredValue
+                        Последнее загаданное Вами значение - @user.DesiredValue
                     </td>
                     <td class="col-md-6">
                         История значений: @historyOfDesiredValue

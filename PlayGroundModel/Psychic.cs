@@ -5,17 +5,12 @@ namespace PlayGroundModel
     /// <summary>
     /// Сущность экстрасенса.
     /// </summary>
-    public class Psychic
+    internal class Psychic : IPsychic
     {
         /// <summary>
         /// Имя.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Количество попыток.
-        /// </summary>
-        public int AttepmtsCounter { get; set; } = 0;
 
         /// <summary>
         /// Количество успешных попыток.
@@ -42,11 +37,16 @@ namespace PlayGroundModel
         /// </summary>
         public List<int> AnswerHistory { get; set; } = new List<int>();
 
+        public IEnumerable<int> GetAnswerHistory()
+        {
+            return AnswerHistory;
+        }
+
         /// <summary>
         /// Угадать число.
         /// </summary>
         /// <returns>Число</returns>
-        internal int GuessNumber()
+        public int GuessNumber()
         {
             return Tools.GetRandomValue();
         }
