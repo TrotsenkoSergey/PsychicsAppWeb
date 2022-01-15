@@ -44,7 +44,8 @@ namespace Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewData["ValidUserValue"] = validUserValue; //так я избавился от VieBag и прокидываю во View->PlayGround
+                ViewData["ValidUserValue"] = validUserValue; 
+                //так я избавился от ViewBag и прокидываю во View->PlayGround
                 return View("PsychicsMove", playGround);
             }
 
