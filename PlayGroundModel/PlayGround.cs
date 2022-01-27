@@ -113,7 +113,7 @@ namespace PlayGroundModel
                     ? psychic.CurrentAnswer - User.DesiredValue
                     : User.DesiredValue - psychic.CurrentAnswer;
 
-                int confidenceLevel = default;
+                int confidenceLevel;
 
                 // перебираем и в зависимости от результата определяем уровень достоверности
                 if (oddsBtwUser == 0)
@@ -123,23 +123,23 @@ namespace PlayGroundModel
                 }
                 else if (oddsBtwUser > 0 && oddsBtwUser < 10)
                 {
-                    confidenceLevel = psychic.ConfidenceLevel + 20;
+                    confidenceLevel = psychic.ConfidenceLevel - 5;
                 }
                 else if (oddsBtwUser >= 10 && oddsBtwUser < 20)
                 {
-                    confidenceLevel = psychic.ConfidenceLevel + 10;
+                    confidenceLevel = psychic.ConfidenceLevel - 10;
                 }
                 else if (oddsBtwUser >= 20 && oddsBtwUser < 30)
                 {
-                    confidenceLevel = psychic.ConfidenceLevel;
+                    confidenceLevel = psychic.ConfidenceLevel - 15;
                 }
                 else if (oddsBtwUser >= 30 && oddsBtwUser < 40)
                 {
-                    confidenceLevel = psychic.ConfidenceLevel - 10;
+                    confidenceLevel = psychic.ConfidenceLevel - 20;
                 }
                 else if (oddsBtwUser >= 40 && oddsBtwUser < 60)
                 {
-                    confidenceLevel = psychic.ConfidenceLevel - 20;
+                    confidenceLevel = psychic.ConfidenceLevel - 25;
                 }
                 else // oddsBtwUser >= 60
                 {
